@@ -3,5 +3,5 @@ ancho=800
 largo=600
 
 FPS=60
-
+SCALE=3
 SPEED=3
