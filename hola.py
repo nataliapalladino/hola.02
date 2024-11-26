@@ -1,6 +1,7 @@
 import pygame
 import constant
 from character import character
+from weanpon import Weapon
 
 pygame.init()
 
@@ -9,7 +10,7 @@ scree=pygame.display.set_mode((constant.ancho,constant.largo))
 clock=pygame.time.Clock() 
 
 running=True
-
+bow_image=pygame.image.load("Tengo-Fe/images/weapons/bow.png")
 
 
 movin_right=False
@@ -24,15 +25,30 @@ def scale_img(image,scale):
     
     return pygame.transform.scale(image,(w*scale,h*scale))
 
-animation_list=[]
-for i in range(4):
-    img=pygame.image.load(f"Tengo-Fe/images/characters/elf/idle/{i}.png")
-    img=scale_img(img,3)
-    animation_list.append(img)
+mob_animation=[]
+mob_types=["big_demon","elf","imp","muddy","skeleton","tiny_zombie","goblin"]
+
+animation_types=["idle","run"]
+for mob in mob_types:
+    animation_list=[]
+
+    for animation in animation_types:
+        temp_list=[]
+        for i in range(4):
+            img=pygame.image.load(f"Tengo-Fe/images/characters/{mob}/{animation}/{i}.png")
+            img=scale_img(img,3)
+            temp_list.append(img)
+        animation_list.append(temp_list)
+    mob_animation.append(animation_list)
     
 
-player=character(40,50,animation_list)
+player=character(40,50,mob_animation,1)
+arrow=pygame.image.load("tengo-fe/images/weapons/arrow.png")
+arrow_image=scale_img(arrow,constant.SCALE)
 
+bow=Weapon(bow_image,arrow_image)
+bow=Weapon(bow_image,arrow_image)
+arrow_group=pygame.sprite.Group()
 while running:
     
     scree.fill((204,169,221))
@@ -49,8 +65,13 @@ while running:
     if movin_down == True:
         Dy=constant.SPEED
 
-    
+    arrow=bow.update(player)
+    if arrow:
+        arrow_group.add(arrow)
     player.draw(scree)
+    bow.draw(scree)
+    for arrow in arrow_group:
+        arrow.draw(scree)
     
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -78,6 +99,7 @@ while running:
          
     player.move(Dx,Dy) 
     player.update()
+    bow.update(player)
     
             
     pygame.display.update()
